@@ -5,4 +5,4 @@ export type ctrl_vistas = {
     fugas: (c: Context) => Promise<Response>
 };
 
-export type sensor_response = Array<{id: number, dato:number, segundo: number}> | void
+export type sensor_response = Array<{id: number, tiempo_inicial: Date, tiempo_final: Date}> | []

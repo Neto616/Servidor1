@@ -1,10 +1,10 @@
 import { Client } from "https://deno.land/x/mysql/mod.ts";
-import mysql from "npm:mysql2@^2.3.3/promise";
+import mysql, { RowDataPacket } from "npm:mysql2@^2.3.3/promise"
 import { sensor_response } from './tipos.ts';
 
 
-const connectDB = async (): Promise<any> => {
-    const client = await mysql.createPool({
+const connectDB = async (): Promise<mysql.Pool> => {
+    const pool = await mysql.createPool({
       host: Deno.env.get("HOST"),
       user: Deno.env.get("USER"),
       port: parseInt(Deno.env.get("PORT")?.toString() || "3306"),
@@ -15,11 +15,11 @@ const connectDB = async (): Promise<any> => {
     });
   
     console.log("✅ Conexión exitosa a MySQL");
-    return client;
+    return pool;
 };
 
 class BD {
-  private bd!: Client;
+  private bd!:  mysql.Pool;
 
   constructor() {
     this.initDB();
@@ -37,12 +37,17 @@ class BD {
 
   public async getFugas(): Promise<sensor_response> {
     try {
-      const dataTable= await this.bd.query(`SELECT * FROM fuga_gas`)
+      const dataTable= await this.bd.query(
+        `SELECT 
+          id as id, 
+          tiempo_inicial as tiempo_inicial,
+          tiempo_final as tiempo_final 
+        FROM fuga_gas`)
       console.log("Dato en tabla: ", dataTable[0])
-      return dataTable[0]
+      return dataTable[0] as sensor_response;
     } catch (error) {
       console.log(error);
-      return
+      return []
     }
   }
 }
