@@ -28,6 +28,9 @@ const vistas: ctrl_vistas = {
         } catch (error) {
             return c.json({ estatus: 0, result: { info: "Ocurrio un error: "+error}});
         }
+    },
+    estatus_filter: async (c:Context) => {
+        return c.json({ estatus: 1 })
     }
 }
 

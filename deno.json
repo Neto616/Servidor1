@@ -1,12 +1,14 @@
 {
-  "imports": {
-    "hono": "jsr:@hono/hono@^4.7.2"
-  },
-  "tasks": {
-    "start": "deno run --allow-all --watch main.ts"
-  },
-  "compilerOptions": {
-    "jsx": "precompile",
-    "jsxImportSource": "hono/jsx"
+    "imports": {
+      "hono": "jsr:@hono/hono@^4.7.2",
+       "@hono/middleware": "jsr:@hono/middleware"
+    },
+    "tasks": {
+      "start": "deno run --allow-all --watch main.ts",
+      "dev": "deno run --allow-net --import-map=deno.json main.ts"
+    },
+    "compilerOptions": {
+      "jsx": "precompile",
+      "jsxImportSource": "hono/jsx"
+    }
   }
-}
