@@ -20,10 +20,7 @@ const vistas: ctrl_vistas = {
         try {
             const fugas: sensor_response = await consultas.getFugas();
             const existFolder: boolean = await exists("./archivo");
-
-            if(!existFolder) Deno.mkdirSync("./archivo", {recursive: true})
-            await Deno.writeTextFile("./archivo/usuarios.json", JSON.stringify(fugas));
-
+            
             return c.json({ estatus: 1, result: {data: fugas} });
         } catch (error) {
             return c.json({ estatus: 0, result: { info: "Ocurrio un error: "+error}});
