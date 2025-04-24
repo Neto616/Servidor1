@@ -7,10 +7,3 @@ export type ctrl_vistas = {
 };
 
 export type sensor_response = Array<{id: number, tiempo_inicial: Date, tiempo_final: Date}> | [];
-
-export const filter_flags = {
-    dias: false,
-    semanas: false,
-    meses: false,
-    anios: false,
-}

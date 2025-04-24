@@ -1,4 +1,3 @@
-import { Client } from "https://deno.land/x/mysql/mod.ts";
 import mysql, { RowDataPacket } from "npm:mysql2@^2.3.3/promise"
 import { sensor_response } from './tipos.ts';
 
@@ -42,12 +41,65 @@ class BD {
           id as id, 
           tiempo_inicial as tiempo_inicial,
           tiempo_final as tiempo_final 
-        FROM fuga_gas`)
-      console.log("Dato en tabla: ", dataTable[0])
+        FROM fuga_gas
+        order by id`)
       return dataTable[0] as sensor_response;
     } catch (error) {
       console.log(error);
-      return []
+      throw error;
+    }
+  }
+
+  public async getAvgDatos(){
+    try {
+      const dataTable = await this.bd.query(
+        `SELECT
+    df.id_fuga,
+    AVG(df.ppm) AS promedio_ppm
+FROM detalles_fuga df
+INNER JOIN fuga_gas fg ON df.id_fuga = fg.id
+WHERE
+    (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 12) DAY)
+     AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+    OR
+    (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 12) DAY)
+     AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+    OR
+    (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 12) DAY)
+     AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+GROUP BY df.id_fuga;
+        `);
+      return dataTable[0]
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+
+  }
+
+  public async getReporteFugas(filtro ?: string): Promise<any> {
+    try {
+      const dataTable = await this.bd.query(
+        `SELECT
+        df.*
+        from detalles_fuga df
+        inner join fuga_gas fg on df.id_fuga = fg.id
+        where
+        (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+        AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+        OR
+        (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+        AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+        OR
+        (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+        AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY));
+        `
+      )
+
+      return dataTable[0]
+    } catch (error) {
+      console.log(error);
+      return [];
     }
   }
 }
