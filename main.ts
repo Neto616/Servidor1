@@ -1,6 +1,6 @@
 import { Hono, Context } from 'hono'
-import { prettyJSON } from "https://deno.land/x/hono@v4.3.11/middleware/pretty-json/index.ts";
 import {default as vistas} from './routes.views.ts';
+import "https://deno.land/std@0.224.0/dotenv/load.ts";
 
 const app = new Hono()
 // app.use(prettyJSON())

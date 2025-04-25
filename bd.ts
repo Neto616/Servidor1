@@ -1,8 +1,9 @@
 import mysql, { RowDataPacket } from "npm:mysql2@^2.3.3/promise"
 import { sensor_response } from './tipos.ts';
+import Connection from "npm:mysql2@^2.3.3";
 
 
-const connectDB = async (): Promise<mysql.Pool> => {
+const connectDB = async (): Promise<any> => {
     const pool = await mysql.createPool({
       host: Deno.env.get("HOST"),
       user: Deno.env.get("USER"),
@@ -41,8 +42,7 @@ class BD {
           id as id, 
           tiempo_inicial as tiempo_inicial,
           tiempo_final as tiempo_final 
-        FROM fuga_gas
-        order by id`)
+        FROM fuga_gas`)
       return dataTable[0] as sensor_response;
     } catch (error) {
       console.log(error);
@@ -50,49 +50,23 @@ class BD {
     }
   }
 
-  public async getAvgDatos(){
+  private async getReporteDiaAnterior(): Promise<any> {
     try {
       const dataTable = await this.bd.query(
         `SELECT
-    df.id_fuga,
-    AVG(df.ppm) AS promedio_ppm
-FROM detalles_fuga df
-INNER JOIN fuga_gas fg ON df.id_fuga = fg.id
-WHERE
-    (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 12) DAY)
-     AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
-    OR
-    (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 12) DAY)
-     AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
-    OR
-    (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 12) DAY)
-     AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
-GROUP BY df.id_fuga;
-        `);
-      return dataTable[0]
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-
-  }
-
-  public async getReporteFugas(filtro ?: string): Promise<any> {
-    try {
-      const dataTable = await this.bd.query(
-        `SELECT
-        df.*
+          HOUR(df.tiempo) as hora,
+          SUM(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
         where
-        (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
-        AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
-        OR
-        (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
-        AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
-        OR
-        (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
-        AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY));
+          fg.tiempo_inicial >= DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+            AND fg.tiempo_inicial < DATE(CURDATE())
+            OR fg.tiempo_final > DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+            AND fg.tiempo_final <= DATE(CURDATE())
+            OR fg.tiempo_inicial <= DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+            AND fg.tiempo_final >= DATE(CURDATE())
+        group by HOUR(df.tiempo)
+        ORDER BY hora;
         `
       )
 
@@ -101,6 +75,129 @@ GROUP BY df.id_fuga;
       console.log(error);
       return [];
     }
+  }
+
+  private async getReporteSemanaAnterior(): Promise<any>{
+    try {
+      const dataTable = await this.bd.query(
+        `
+        SELECT
+          day(df.tiempo) as dia,
+          SUM(df.ppm) as ppm_total,
+          count(*) as total
+        from detalles_fuga df
+        inner join fuga_gas fg on df.id_fuga = fg.id
+        where
+          (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+          AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+          OR (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+          AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+          OR (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+          AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+        group by day(df.tiempo)
+        ORDER BY dia
+        `
+      )
+
+      return dataTable[0]
+    } catch (error) {
+      console.log(error);
+      return []
+    }
+  }
+  
+  private async getReporteTresMeses(): Promise<any> {
+    try {
+      const dataTable = await this.bd.query(
+        `
+        SELECT
+          MONTH(df.tiempo) as mes,
+          sum(df.ppm) as ppm_total
+        from detalles_fuga df
+        inner join fuga_gas fg on df.id_fuga = fg.id
+        where
+          fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+            AND fg.tiempo_inicial < CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+            AND fg.tiempo_final <= CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+            AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
+        group by month(df.tiempo)
+        order by mes
+        `
+      )
+
+      return dataTable[0];
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  private async getReporteSeisMeses(): Promise<any> {
+    try {
+      const dataTable = await this.bd.query(
+        `
+        SELECT
+          MONTH(df.tiempo) as mes,
+          sum(df.ppm) as ppm_total
+        from detalles_fuga df
+        inner join fuga_gas fg on df.id_fuga = fg.id
+        where
+          fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            AND fg.tiempo_inicial < CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            AND fg.tiempo_final <= CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+            AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
+        group by month(df.tiempo)
+        order by mes
+        `
+      )
+
+      return dataTable[0];
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  private async getReporteAnioAnterior(): Promise<any> {
+    try {
+      const dataTable = await this.bd.query(
+        `
+        SELECT
+          MONTH(df.tiempo) as mes,
+            year(df.tiempo) as anio,
+            sum(df.ppm) as ppm_total
+        from detalles_fuga df
+        inner join fuga_gas fg on df.id_fuga = fg.id
+        where
+          fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            AND fg.tiempo_inicial < CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            AND fg.tiempo_final <= CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
+        group by month(df.tiempo), year(df.tiempo)
+        order by mes, anio asc
+        `
+      )
+
+      return dataTable[0];
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  public async getReporteFugas(filter?: string) {
+    console.log(filter)
+    if(filter === "ultimo_dia") return await this.getReporteDiaAnterior();
+    if(filter === "tres_meses") return await this.getReporteTresMeses();
+    if(filter === "seis_meses") return await this.getReporteSeisMeses();
+    if(filter === "ultimo_anio") return await this.getReporteAnioAnterior()
+    else return await this.getReporteSemanaAnterior();
   }
 }
 
