@@ -1,6 +1,7 @@
 import mysql, { RowDataPacket } from "npm:mysql2@^2.3.3/promise"
 import { sensor_response } from './tipos.ts';
-import Connection from "npm:mysql2@^2.3.3";
+import Connection, { FieldPacket } from "npm:mysql2@^2.3.3";
+import { data_real_time } from './tipos';
 
 
 const connectDB = async (): Promise<any> => {
@@ -185,6 +186,26 @@ class BD {
     } catch (error) {
       console.log(error);
       return [];
+    }
+  }
+
+  public async getDatoEnvivo() {
+    try {
+      const [rows] = await this.bd.query(
+        `
+        SELECT 
+          COALESCE(ppm, 0) AS ppm, 
+          tiempo
+        FROM detalles_fuga
+        WHERE tiempo >= NOW() - INTERVAL 10 MINUTE
+        ORDER BY id_fuga DESC
+        LIMIT 1;
+        `) as unknown as  data_real_time[];
+
+        return rows[0]?.ppm ?? 0;
+    } catch (error) {
+      console.log(error);
+      return 0
     }
   }
 

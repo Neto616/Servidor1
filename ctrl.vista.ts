@@ -112,6 +112,31 @@ const graficas = {
         } catch (error) {
             return c.json({ estatus: 0, info: { message: "Ha ocurrido un error: "+error }});
         }
+    },
+    mostrar_datos_envivo: async (c: Context) => {
+        try {
+            await consultas.initDB()
+
+            const ppm = await consultas.getDatoEnvivo();
+
+            return c.json({
+                estatus: 1,
+                info: {
+                    message: "Datos en vivo",
+                    data: {
+                        ppm: ppm
+                    }
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            return c.json({
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error"
+                }
+            })
+        }
     }
 }
 

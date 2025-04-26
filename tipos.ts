@@ -8,6 +8,8 @@ export type ctrl_vistas = {
 
 export type sensor_response = Array<{id: number, tiempo_inicial: Date, tiempo_final: Date}> | [];
 
+export type data_real_time = { ppm: number, time: Date }
+
 export type filtros = {
     ultimo_dia: boolean, //Ultimo dia
     ultima_semana: boolean, //Ultima semana

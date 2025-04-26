@@ -7,6 +7,7 @@ route.get("/", vistas.inicio);
 route.get("/reporte_fugas", vistas.fugas);
 route.get("/estatus_filter", vistas.estatus_filter);
 route.get("/mostrar_datos", graficas.mostrar_datos);
+route.get("/mostrar_datos_envivo", graficas.mostrar_datos_envivo);
 route.post("/guardar_datos", graficas.guardar_datos);
 
 export default route;
