@@ -19,6 +19,7 @@ let datos: data = {
 }
 
 const consultas: BD = new BD();
+await consultas.initDB()
 
 const vistas: ctrl_vistas = {
     inicio: async (c: Context) => {
@@ -34,7 +35,7 @@ const vistas: ctrl_vistas = {
     },
     fugas: async(c: Context): Promise<Response> => {
         try {
-            await consultas.initDB()
+            
             const fugas: sensor_response = await consultas.getFugas();
             console.log(fugas)
             return c.json({ estatus: 1, result: {data: fugas} });
@@ -44,7 +45,7 @@ const vistas: ctrl_vistas = {
     },
     estatus_filter: async (c:Context) => {
         try {
-            await consultas.initDB();
+            ;
             const { filter } = await c.req.header();
             let filtro: string | undefined;
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
@@ -97,7 +98,7 @@ const graficas = {
         try {
             const { filtro } = c.req.header();
             console.log("Filtro del header", filtro)
-            await consultas.initDB();
+            ;
             const result = await consultas.getReporteFugas(filtro);
 
             console.log(result)
@@ -115,7 +116,7 @@ const graficas = {
     },
     mostrar_datos_envivo: async (c: Context) => {
         try {
-            await consultas.initDB()
+            
 
             const ppm = await consultas.getDatoEnvivo();
 
