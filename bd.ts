@@ -1,7 +1,6 @@
 import mysql, { RowDataPacket } from "npm:mysql2@^2.3.3/promise"
-import { sensor_response } from './tipos.ts';
+import { sensor_response, data_real_time } from './tipos.ts';
 import Connection, { FieldPacket } from "npm:mysql2@^2.3.3";
-import { data_real_time } from './tipos';
 
 
 const connectDB = async (): Promise<any> => {
