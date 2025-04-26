@@ -196,7 +196,7 @@ class BD {
           COALESCE(ppm, 0) AS ppm, 
           tiempo
         FROM detalles_fuga
-        WHERE tiempo >= NOW() - INTERVAL 10 MINUTE
+        WHERE tiempo >= NOW() - INTERVAL 100 SECOND
         ORDER BY id_fuga DESC
         LIMIT 1;
         `) as unknown as  data_real_time[];
