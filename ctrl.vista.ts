@@ -29,6 +29,7 @@ const vistas: ctrl_vistas = {
     },
     fugas: async(c: Context): Promise<Response> => {
         try {
+            await consultas.initDB()
             const fugas: sensor_response = await consultas.getFugas();
             console.log(fugas)
             return c.json({ estatus: 1, result: {data: fugas} });
@@ -38,6 +39,7 @@ const vistas: ctrl_vistas = {
     },
     estatus_filter: async (c:Context) => {
         try {
+            await consultas.initDB();
             const { filter } = await c.req.header();
             let filtro: string | undefined;
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
@@ -48,7 +50,7 @@ const vistas: ctrl_vistas = {
                 }
                 filter_flags[element] = false;
             }
-
+            
             const fugas = await consultas.getReporteFugas(filtro);
 
             c.status(200);
@@ -88,8 +90,8 @@ const graficas = {
     },
     mostrar_datos: async(c: Context) => {
         try {
-            const dbObject = new BD();
-            const result = await dbObject.getReporteFugas(datos.filtro);
+            await consultas.initDB();
+            const result = await consultas.getReporteFugas(datos.filtro);
 
             return c.json({ 
                 estatus: 1, 

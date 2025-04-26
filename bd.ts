@@ -21,11 +21,9 @@ const connectDB = async (): Promise<any> => {
 class BD {
   private bd!:  mysql.Pool;
 
-  constructor() {
-    this.initDB();
-  }
+  constructor() {}
 
-  private async initDB(): Promise<void>{
+  public async initDB(): Promise<void>{
     try {
       this.bd = await connectDB();
       return
@@ -98,7 +96,6 @@ class BD {
         ORDER BY dia
         `
       )
-
       return dataTable[0]
     } catch (error) {
       console.log(error);
