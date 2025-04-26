@@ -1,7 +1,7 @@
 import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 
 export type ctrl_vistas = {
-    inicio: (c: Context) => Response,
+    inicio: (c: Context) => Promise<any>,
     fugas: (c: Context) => Promise<Response>,
     estatus_filter: (c:Context) => Promise<Response>
 };

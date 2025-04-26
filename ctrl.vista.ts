@@ -2,6 +2,8 @@ import { ctrl_vistas, sensor_response, filtros, data } from './tipos.ts';
 import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 import BD from './bd.ts';
 import "https://deno.land/std@0.187.0/dotenv/load.ts";
+import { fromFileUrl, join } from "https://deno.land/std@0.187.0/path/mod.ts";
+import { exists } from 'https://deno.land/std/fs/mod.ts';
 
 let filter_flags: filtros = {
     ultimo_dia: false, //Ultimo dia
@@ -19,13 +21,16 @@ let datos: data = {
 const consultas: BD = new BD();
 
 const vistas: ctrl_vistas = {
-    inicio: (c: Context): Response => {
-        try {
-            console.log("Bienvenido desde consola");
-            return c.json({ estatus: 1, result: {info: "Bienvenido"}});
-        } catch (error) {
-            return c.json({ estatus: 0, result: { info: error }});
+    inicio: async (c: Context) => {
+        const indexPath = join('./build', 'index.html');
+        if (await exists(indexPath)) {
+            console.log("Si existe el html")
+            const indexContent = await Deno.readTextFile(indexPath);
+            console.log(indexContent)
+            return c.html(indexContent);
         }
+        return c.notFound();
+
     },
     fugas: async(c: Context): Promise<Response> => {
         try {
@@ -62,7 +67,7 @@ const vistas: ctrl_vistas = {
             c.status(400);
             return c.json({ estatus: 0, result: { info: "Ocurrio un error : "+error}});
         }
-    }
+    },
 }
 
 const graficas = {
@@ -90,8 +95,12 @@ const graficas = {
     },
     mostrar_datos: async(c: Context) => {
         try {
+            const { filtro } = c.req.header();
+            console.log("Filtro del header", filtro)
             await consultas.initDB();
-            const result = await consultas.getReporteFugas(datos.filtro);
+            const result = await consultas.getReporteFugas(filtro);
+
+            console.log(result)
 
             return c.json({ 
                 estatus: 1, 

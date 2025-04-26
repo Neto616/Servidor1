@@ -52,7 +52,7 @@ class BD {
     try {
       const dataTable = await this.bd.query(
         `SELECT
-          HOUR(df.tiempo) as hora,
+          HOUR(df.tiempo) as label,
           SUM(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
@@ -64,7 +64,7 @@ class BD {
             OR fg.tiempo_inicial <= DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
             AND fg.tiempo_final >= DATE(CURDATE())
         group by HOUR(df.tiempo)
-        ORDER BY hora;
+        ORDER BY label;
         `
       )
 
@@ -80,7 +80,7 @@ class BD {
       const dataTable = await this.bd.query(
         `
         SELECT
-          day(df.tiempo) as dia,
+          day(df.tiempo) as label,
           SUM(df.ppm) as ppm_total,
           count(*) as total
         from detalles_fuga df
@@ -93,7 +93,7 @@ class BD {
           OR (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
           AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
         group by day(df.tiempo)
-        ORDER BY dia
+        ORDER BY label
         `
       )
       return dataTable[0]
@@ -108,7 +108,7 @@ class BD {
       const dataTable = await this.bd.query(
         `
         SELECT
-          MONTH(df.tiempo) as mes,
+          MONTH(df.tiempo) as label,
           sum(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
@@ -120,7 +120,7 @@ class BD {
             OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
             AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
         group by month(df.tiempo)
-        order by mes
+        order by label
         `
       )
 
@@ -136,7 +136,7 @@ class BD {
       const dataTable = await this.bd.query(
         `
         SELECT
-          MONTH(df.tiempo) as mes,
+          MONTH(df.tiempo) as label,
           sum(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
@@ -148,7 +148,7 @@ class BD {
             OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
             AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
         group by month(df.tiempo)
-        order by mes
+        order by label
         `
       )
 
@@ -164,7 +164,7 @@ class BD {
       const dataTable = await this.bd.query(
         `
         SELECT
-          MONTH(df.tiempo) as mes,
+          MONTH(df.tiempo) as label,
             year(df.tiempo) as anio,
             sum(df.ppm) as ppm_total
         from detalles_fuga df
@@ -177,7 +177,7 @@ class BD {
             OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
             AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
         group by month(df.tiempo), year(df.tiempo)
-        order by mes, anio asc
+        order by mes, label asc
         `
       )
 
