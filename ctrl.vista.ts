@@ -1,5 +1,5 @@
 import { ctrl_vistas, sensor_response, filtros, data } from './tipos.ts';
-import { Context } from 'hono';
+import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 import BD from './bd.ts';
 import "https://deno.land/std@0.187.0/dotenv/load.ts";
 

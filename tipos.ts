@@ -1,4 +1,4 @@
-import { Context } from 'hono';
+import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 
 export type ctrl_vistas = {
     inicio: (c: Context) => Response,

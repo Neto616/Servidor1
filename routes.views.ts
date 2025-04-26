@@ -1,4 +1,4 @@
-import { Hono } from 'hono'
+import { Hono } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 import { vistas, graficas } from "./ctrl.vista.ts";
 
 const route:Hono = new Hono();
