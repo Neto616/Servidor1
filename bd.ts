@@ -216,6 +216,31 @@ class BD {
     if(filter === "ultimo_anio") return await this.getReporteAnioAnterior()
     else return await this.getReporteSemanaAnterior();
   }
+
+  public async getReporteFugasDeskApp(){
+    try {
+      const [rows] = await this.bd.query(
+        `SELECT
+          df.tiempo as tiempo,
+          df.ppm as ppm
+        from detalles_fuga df
+        inner join fuga_gas fg on df.id_fuga = fg.id
+        where
+          (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+          AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+          OR (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+          AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+          OR (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+          AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+          `
+      )
+
+      return rows;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
 }
 
 export default BD;

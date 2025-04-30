@@ -57,7 +57,7 @@ const vistas: ctrl_vistas = {
                 filter_flags[element] = false;
             }
             console.log(filter_flags)
-            const fugas = await consultas.getReporteFugas(filtro);
+            const fugas = await consultas.getReporteFugasDeskApp();
 
             c.status(200);
             return c.json({ estatus: 1, result: { 
