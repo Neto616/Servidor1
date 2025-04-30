@@ -56,13 +56,13 @@ const vistas: ctrl_vistas = {
                 }
                 filter_flags[element] = false;
             }
-            
+            console.log(filter_flags)
             const fugas = await consultas.getReporteFugas(filtro);
 
             c.status(200);
             return c.json({ estatus: 1, result: { 
                 info: "Todo bien en el servidor", 
-                filtro,
+                filtro: filtro ?? "ultima_semana",
                 data: fugas || [] } })
         } catch (error) {
             c.status(400);

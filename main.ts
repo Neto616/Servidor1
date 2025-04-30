@@ -1,5 +1,5 @@
 import { Hono, Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
-import { cors, serveStatic } from "https://deno.land/x/hono@v4.1.6/middleware.ts"
+import { cors } from "https://deno.land/x/hono@v4.1.6/middleware.ts"
 import {default as vistas} from './routes.views.ts';
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
 
