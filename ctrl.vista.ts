@@ -18,6 +18,8 @@ let datos: data = {
     promedio: 0
 }
 
+let fueraUmbral: boolean = false;
+
 const consultas: BD = new BD();
 await consultas.initDB()
 
@@ -116,8 +118,6 @@ const graficas = {
     },
     mostrar_datos_envivo: async (c: Context) => {
         try {
-            
-
             const ppm = await consultas.getDatoEnvivo();
 
             return c.json({
@@ -141,7 +141,49 @@ const graficas = {
     }
 }
 
+const umbral = {
+    cambiar: async (c: Context) => {
+        try {
+            const { umbral } = await c.req.json();
+
+            fueraUmbral = umbral;
+
+            return c.json({
+                estatus: 1,
+                info: {
+                    message: "Se ha detectado una fuga anormal"
+                }
+            })
+        } catch (error) {
+            console.log("[Cambio de Umbral] Ha ocurrido un error: ", error);
+            return c.json({
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error"
+                }
+            })
+        }
+    },
+    obtener: async (c: Context) => {
+        try {
+            return c.json({
+                estatus: 1,
+                info: {
+                    message: "Obtener la inforamción sobre el umbral",
+                    umbral: umbral
+                }
+            });
+        } catch (error) {
+            console.log("[Obtener Umbral] Ha ocurrido un error: ", error);
+            return c.json({ estatus: 0, info: {
+                message: "Ha ocurrido un error"
+            }});
+        }
+    }
+}
+
 export {
     vistas,
-    graficas
+    graficas,
+    umbral
 };
