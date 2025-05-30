@@ -108,7 +108,7 @@ const graficas = {
             const { gas } = c.req.query();
             const idGas = parseInt(gas || "5")
             console.log("Filtro del header", filtro);
-            const result = await consultas.getReporteFugas(filtro, gas[idGas]);
+            const result = await consultas.getReporteFugas(filtro, (gases[idGas] as string));
 
             console.log(result)
 
