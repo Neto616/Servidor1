@@ -53,7 +53,7 @@ class BD {
       const dataTable = await this.bd.query(
         `SELECT
           HOUR(df.tiempo) as label,
-          SUM(df.ppm) as ppm_total
+          AVG(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
         where
@@ -81,7 +81,7 @@ class BD {
         `
         SELECT
           day(df.tiempo) as label,
-          SUM(df.ppm) as ppm_total,
+          AVG(df.ppm) as ppm_total,
           count(*) as total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
@@ -109,7 +109,7 @@ class BD {
         `
         SELECT
           MONTH(df.tiempo) as label,
-          sum(df.ppm) as ppm_total
+          AVG(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
         where
@@ -137,7 +137,7 @@ class BD {
         `
         SELECT
           MONTH(df.tiempo) as label,
-          sum(df.ppm) as ppm_total
+          AVG(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
         where
@@ -166,7 +166,7 @@ class BD {
         SELECT
           MONTH(df.tiempo) as label,
             year(df.tiempo) as anio,
-            sum(df.ppm) as ppm_total
+            AVG(df.ppm) as ppm_total
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
         where
