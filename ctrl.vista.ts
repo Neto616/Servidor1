@@ -151,7 +151,8 @@ const umbral = {
             return c.json({
                 estatus: 1,
                 info: {
-                    message: "Se ha detectado una fuga anormal"
+                    message: "Se ha detectado una fuga anormal",
+                    umbral: fueraUmbral
                 }
             })
         } catch (error) {
