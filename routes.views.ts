@@ -11,3 +11,6 @@ route.get("/mostrar_datos_envivo", graficas.mostrar_datos_envivo);
 route.post("/guardar_datos", graficas.guardar_datos);
 
 export default route;
+
+
+// mysql://root:acWgejkThAFnWqZHUGYfjHjYbWHYaELS@tramway.proxy.rlwy.net:40889/railway

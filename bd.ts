@@ -217,7 +217,7 @@ class BD {
     else return await this.getReporteSemanaAnterior();
   }
 
-  public async getReporteFugasDeskApp(){
+  public async getReporteFugasDeskApp(filter?:string){
     try {
       const [rows] = await this.bd.query(
         `SELECT
@@ -226,12 +226,32 @@ class BD {
         from detalles_fuga df
         inner join fuga_gas fg on df.id_fuga = fg.id
         where
-          (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
+        ${filter == "ultimo_dia" ? `fg.tiempo_inicial >= DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+          AND fg.tiempo_inicial < DATE(CURDATE())
+          OR fg.tiempo_final > DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+          AND fg.tiempo_final <= DATE(CURDATE())
+          OR fg.tiempo_inicial <= DATE(DATE_SUB(CURDATE(), INTERVAL 1 DAY))
+          AND fg.tiempo_final >= DATE(CURDATE())`
+          : filter =="tres_meses" ? `fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+          AND fg.tiempo_inicial < CURDATE() + INTERVAL 1 DAY
+          OR fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+          AND fg.tiempo_final <= CURDATE() + INTERVAL 1 DAY
+          OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+          AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY`
+          : filter === "seis_meses" ? `fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            AND fg.tiempo_inicial < CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            AND fg.tiempo_final <= CURDATE() + INTERVAL 1 DAY
+            OR fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+            AND fg.tiempo_final >= CURDATE() + INTERVAL 1 DAY
+        group by month(df.tiempo), year(df.tiempo)`
+          : filter === "ultimo_anio" ? `` 
+          : `(fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
           AND fg.tiempo_inicial < DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
           OR (fg.tiempo_final > DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
           AND fg.tiempo_final <= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
           OR (fg.tiempo_inicial <= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) + 6) DAY)
-          AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))
+          AND fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL DAYOFWEEK(CURDATE()) DAY))`}
           `
       )
 
@@ -241,6 +261,8 @@ class BD {
       return [];
     }
   }
+
+  
 }
 
 export default BD;
