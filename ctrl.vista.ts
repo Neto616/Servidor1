@@ -96,10 +96,19 @@ const graficas = {
     },
     mostrar_datos: async(c: Context) => {
         try {
+            const gases = {
+                1: "Metano",
+                2: "Propano",
+                3: "Amoníaco",
+                4: "Sulfuro de Hidrógeno",
+                5: "Monóxido de Carbono",
+            }
+
             const { filtro } = c.req.header();
-            console.log("Filtro del header", filtro)
-            ;
-            const result = await consultas.getReporteFugas(filtro);
+            const { gas } = c.req.query();
+            const idGas = parseInt(gas || "5")
+            console.log("Filtro del header", filtro);
+            const result = await consultas.getReporteFugas(filtro, gas[idGas]);
 
             console.log(result)
 
