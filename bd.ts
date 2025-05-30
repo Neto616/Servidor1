@@ -163,23 +163,21 @@ class BD {
   private async getReporteSeisMeses(gas?: string): Promise<any> {
     try {
       const dataTable = await this.bd.query(`WITH RECURSIVE meses AS (
-      SELECT DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m') AS mes
-      UNION ALL
-      SELECT DATE_FORMAT(DATE_ADD(mes, INTERVAL 1 MONTH), '%Y-%m')
-      FROM meses
-      WHERE DATE_ADD(mes, INTERVAL 1 MONTH) <= DATE_FORMAT(CURDATE(), '%Y-%m')
-    ), datos AS (
-      SELECT 
-        DATE_FORMAT(df.tiempo, '%Y-%m') AS mes, 
-        AVG(df.ppm) AS ppm_total
-      FROM 
-        detalles_fuga df
-        INNER JOIN fuga_gas fg ON df.id_fuga = fg.id
-      WHERE (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) OR fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH))
+        SELECT DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, '%Y-%m-01') AS mes
+        UNION ALL
+        SELECT DATE_ADD(mes, INTERVAL 1 MONTH)
+        FROM 
+          meses
+        WHERE DATE_ADD(mes, INTERVAL 1 MONTH) <= DATE_FORMAT(CURDATE(), '%Y-%m-01')), datos AS ( SELECT 
+          DATE_FORMAT(df.tiempo, '%Y-%m-01') AS mes, 
+          AVG(df.ppm) AS ppm_total
+        FROM 
+          detalles_fuga df
+          INNER JOIN fuga_gas fg ON df.id_fuga = fg.id
+        WHERE (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) OR fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH))
         AND fg.tipo_gas = ? 
-      GROUP BY DATE_FORMAT(df.tiempo, '%Y-%m')
-    )
-
+    GROUP BY DATE_FORMAT(df.tiempo, '%Y-%m-01'))
+    
     SELECT
       m.mes as label,
       IFNULL(d.ppm_total, 0) AS ppm_total
