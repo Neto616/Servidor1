@@ -170,7 +170,7 @@ const umbral = {
                 estatus: 1,
                 info: {
                     message: "Obtener la inforamción sobre el umbral",
-                    umbral: umbral
+                    umbral: fueraUmbral
                 }
             });
         } catch (error) {
