@@ -26,7 +26,7 @@ route.get("/reporte_fugas", vistas.fugas);
 route.get("/estatus_filter", vistas.estatus_filter);
 route.get("/mostrar_datos", graficas.mostrar_datos);
 route.get("/mostrar_datos_envivo", graficas.mostrar_datos_envivo);
-route.get("/zona_peligro", umbralMdw, graficas.zona_peligro);
+route.get("/zona_peligro", graficas.zona_peligro);
 route.get("/umbral", umbral.obtener);
 
 route.post("/guardar_datos", graficas.guardar_datos);
