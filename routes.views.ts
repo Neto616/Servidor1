@@ -11,6 +11,5 @@ route.get("/mostrar_datos_envivo", graficas.mostrar_datos_envivo);
 route.get("/umbral", umbral.obtener);
 
 route.post("/guardar_datos", graficas.guardar_datos);
-route.put("/umbral", umbral.cambiar);
 
 export default route;

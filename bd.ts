@@ -1,5 +1,5 @@
 import mysql, { RowDataPacket } from "npm:mysql2@^2.3.3/promise"
-import { sensor_response, data_real_time } from './tipos.ts';
+import { sensor_response, data_real_time, configuracion_repsonse } from './tipos.ts';
 import Connection, { FieldPacket } from "npm:mysql2@^2.3.3";
 
 
@@ -30,6 +30,19 @@ class BD {
     } catch (error) {
       console.log("Error al conectar con la BD: ", error)
       return
+    }
+  }
+
+  public async getUmbralEstatus() {
+    try {
+      const {dataTable}= await this.bd.execute(
+        `SELECT 
+          *
+        from configuraciones`) as [configuracion_repsonse[], FieldPacket[]]
+      return dataTable[0];
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   }
 
