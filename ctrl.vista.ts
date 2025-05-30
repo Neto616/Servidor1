@@ -145,7 +145,7 @@ const umbral = {
     cambiar: async (c: Context) => {
         try {
             const { umbral } = await c.req.json();
-
+            console.log("El umbral es: ", umbral)
             fueraUmbral = umbral;
 
             return c.json({
@@ -166,6 +166,7 @@ const umbral = {
     },
     obtener: async (c: Context) => {
         try {
+            console.log("EL umbral esta en: ", fueraUmbral)
             return c.json({
                 estatus: 1,
                 info: {
