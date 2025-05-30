@@ -112,13 +112,13 @@ class BD {
         AND fg.tipo_gas = ? 
     GROUP BY  DATE(df.tiempo))
     
-    SELECT
-      d.fecha as label,
-      IFNULL(datos.ppm_total, 0) AS ppm_total,
-      IFNULL(datos.total, 0) AS total
+    SELECT 
+      DATE_FORMAT(d.fecha, '%Y-%m-%d') AS label, 
+      IFNULL(datos.ppm_total, 0) AS ppm_total, 
+      IFNULL(datos.total, 0) AS total 
     FROM 
-      dias_semana d
-      LEFT JOIN datos ON d.fecha = datos.label -- datos.label refers to DATE(df.tiempo) from the subquery
+      dias_semana d 
+      LEFT JOIN datos ON d.fecha = datos.label 
     ORDER BY d.fecha;`, [gas]);
 
       return dataTable[0];
