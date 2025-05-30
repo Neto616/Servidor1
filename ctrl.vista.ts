@@ -142,13 +142,13 @@ const graficas = {
 const umbral = {
     obtener: async (c: Context) => {
         try {
-            const result = await consultas.getUmbralEstatus();
+            const result: configuracion_repsonse = await consultas.getUmbralEstatus();
 
              return c.json({
                 estatus: 1,
                 info: {
                     message: "Obtener la inforamción sobre el umbral",
-                    umbral: result.fueraUmbra
+                    umbral: result[0]?.fueraUmbra ?? 0
                 }
             });
         } catch (error) {

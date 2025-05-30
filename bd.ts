@@ -35,11 +35,11 @@ class BD {
 
   public async getUmbralEstatus() {
     try {
-      const {dataTable}= await this.bd.execute(
+      const dataTable= await this.bd.query(
         `SELECT 
           *
-        from configuraciones`) as [configuracion_repsonse[], FieldPacket[]]
-      return dataTable[0];
+        from configuraciones`)
+      return dataTable[0] as configuracion_repsonse;
     } catch (error) {
       console.log(error);
       throw error;

@@ -7,7 +7,7 @@ export type ctrl_vistas = {
 };
 
 export type sensor_response = Array<{id: number, tiempo_inicial: Date, tiempo_final: Date}> | [];
-export type configuracion_repsonse = Array<{ppm_limite_inicial: number, ppm_limite_final: number, gas: string, estatus: number, fueraUmbra: number}> | [];
+export type configuracion_repsonse = Array<{ppm_limite_inicial: number, ppm_limite_final: number, gas: string, estatus: number, fueraUmbra: number}>;
 
 export type data_real_time = { ppm: number, time: Date }
 
