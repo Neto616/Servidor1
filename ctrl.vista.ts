@@ -136,6 +136,31 @@ const graficas = {
                 }
             })
         }
+    },
+    zona_peligro: async (c: Context) => {
+        try {
+            const ppm = await consultas.getDatoEnvivo();
+            const data = await consultas.getUmbralEstatus();
+
+            return c.json({
+                estatus: 1,
+                info: {
+                    message: "Datos en vivo",
+                    data: {
+                        ppm: ppm,
+                        limite: data[0]?.ppm_limite_final
+                    }
+                }
+            })
+        } catch (error) {
+            console.log(error);
+            return c.json({
+                estatus: 0,
+                info: {
+                    message: "Ha ocurrido un error"
+                }
+            })
+        }
     }
 }
 
