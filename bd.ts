@@ -176,7 +176,7 @@ class BD {
           INNER JOIN fuga_gas fg ON df.id_fuga = fg.id
         WHERE (fg.tiempo_inicial >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) OR fg.tiempo_final >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH))
         AND fg.tipo_gas = ? 
-    GROUP BY DATE_FORMAT(df.tiempo, '%Y-%m-01'))
+    GROUP BY DATE_FORMAT(df.tiempo, '%Y-%m'))
     
     SELECT
       m.mes as label,
