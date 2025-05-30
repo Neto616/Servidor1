@@ -61,7 +61,7 @@ class BD {
     }
   }
 
-  private async getReporteDiaAnterior(): Promise<any> {
+  private async   getReporteDiaAnterior(): Promise<any> {
     try {
       const dataTable = await this.bd.query(
         `WITH RECURSIVE horas_dia AS (
@@ -112,7 +112,7 @@ class BD {
           GROUP BY DATE(df.tiempo))
           
           SELECT
-            d.fecha as label,
+            d.label as label,
             IFNULL(datos.ppm_total, 0) AS ppm_total,
             IFNULL(datos.total, 0) AS total
           FROM dias_semana d
