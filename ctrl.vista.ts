@@ -98,7 +98,7 @@ const graficas = {
             const { gas } = c.req.query();
             const idGas = parseInt(gas || "5");
             console.log(filter_flags)    
-            await consultas.setFiltro(filtro);        
+            await consultas.setFiltro(filtro ?? "ultima_semana");        
             const result = await consultas.getReporteFugas(filtro, (gases[idGas] || "Monóxido de Carbono"));
 
             return c.json({ 
