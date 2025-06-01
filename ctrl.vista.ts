@@ -45,11 +45,10 @@ const vistas: ctrl_vistas = {
     },
     estatus_filter: async (c:Context) => {
         try {
-            // const { filter } = c.req.header();
             let filtro: string | undefined;
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
             for (const element of keys) {
-                if(filter_flags[element]) filtro = element;
+                if(filter_flags[element] == true) filtro = element;
             }
             console.log("Estatus filter: ", filter_flags)
             const fugas = await consultas.getReporteFugasDeskApp(filtro);
