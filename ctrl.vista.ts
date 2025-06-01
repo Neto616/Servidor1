@@ -2,8 +2,6 @@ import { ctrl_vistas, sensor_response, filtros, data, configuracion_repsonse } f
 import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 import BD from './bd.ts';
 import "https://deno.land/std@0.187.0/dotenv/load.ts";
-import { fromFileUrl, join } from "https://deno.land/std@0.187.0/path/mod.ts";
-import { exists } from 'https://deno.land/std/fs/mod.ts';
 
 let filter_flags: filtros = {
     ultimo_dia: false, //Ultimo dia
@@ -64,7 +62,8 @@ const vistas: ctrl_vistas = {
             return c.json({ estatus: 1, result: { 
                 info: "Todo bien en el servidor", 
                 filtro: filtro ?? "ultima_semana",
-                data: fugas || [] } })
+                data: fugas || [],
+                filter_flags } })
         } catch (error) {
             c.status(400);
             return c.json({ estatus: 0, result: { info: "Ocurrio un error : "+error}});
@@ -128,7 +127,8 @@ const graficas = {
                 estatus: 1, 
                 info: {
                     message: "Datos para la grafica",
-                    data: result || []
+                    data: result || [],
+                    filter_flags
                 }
             });
         } catch (error) {
