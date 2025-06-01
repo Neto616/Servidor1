@@ -51,12 +51,10 @@ const vistas: ctrl_vistas = {
             for (const element of keys) {
                 if(element == (filter || "ultima_semana")){
                     filtro = element;
-                    filter_flags[element] = true;
                 }
-                filter_flags[element] = false;
             }
             console.log("Estatus filter: ", filter_flags)
-            const fugas = await consultas.getReporteFugasDeskApp();
+            const fugas = await consultas.getReporteFugasDeskApp(filtro);
 
             c.status(200);
             return c.json({ estatus: 1, result: { 
