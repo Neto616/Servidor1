@@ -1,5 +1,5 @@
 import { ctrl_vistas, sensor_response, filtros, data, configuracion_repsonse } from './tipos.ts';
-import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
+import { Context, ContextRenderer } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 import BD from './bd.ts';
 import "https://deno.land/std@0.187.0/dotenv/load.ts";
 
@@ -45,25 +45,20 @@ const vistas: ctrl_vistas = {
     },
     estatus_filter: async (c:Context) => {
         try {
-            let filtro: string | undefined;
-            const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
-            for (const element of keys) {
-                if(filter_flags[element] == true) filtro = element;
-            }
-            console.log("Estatus filter: ", filter_flags)
+            const filtro = await consultas.getFiltro();
             const fugas = await consultas.getReporteFugasDeskApp(filtro);
 
             c.status(200);
             return c.json({ estatus: 1, result: { 
                 info: "Todo bien en el servidor", 
-                filtro: filtro ?? "ultima_semana",
+                filtro: filtro,
                 data: fugas || [],
                 filter_flags } })
         } catch (error) {
             c.status(400);
             return c.json({ estatus: 0, result: { info: "Ocurrio un error : "+error}});
         }
-    },
+    }
 }
 
 const graficas = {
@@ -100,25 +95,11 @@ const graficas = {
             }
 
             const { filtro } = c.req.header();
-            console.log("El filtro para motrar datos es: ", filtro)
             const { gas } = c.req.query();
             const idGas = parseInt(gas || "5");
-            let filter: string | undefined;
-            const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
- 
-            for (const element of keys) {
-                if(element == (filtro ?? "ultima_semana")){
-                    console.log("Elemento seleccionado mostrar_datos", element)
-                    filter = element;
-                    filter_flags[element] = true;
-                }
-                filter_flags[element] = false;
-            }
-            console.log(filter_flags)
-            
+            console.log(filter_flags)    
+            await consultas.setFiltro(filtro);        
             const result = await consultas.getReporteFugas(filtro, (gases[idGas] || "Monóxido de Carbono"));
-
-            console.log(result)
 
             return c.json({ 
                 estatus: 1, 

@@ -256,6 +256,24 @@ class BD {
     else return await this.getReporteSemanaAnterior(gas);
   }
 
+  public async getFiltro(){
+    try {
+      const [rows] = await this.bd.query(`select IFNULL(filtro, "ultima_semana") as filtro from configuraciones;`)
+      return rows[0].filtro;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  public async setFiltro(filtro?:string) {
+    try {
+      await this.bd.execute(`update configuraciones set filtro = ${filtro}`)      
+    } catch (error) {
+      return [];
+    }
+  }
+
   public async getReporteFugasDeskApp(filter?:string){
     try {
       const [rows] = await this.bd.query(

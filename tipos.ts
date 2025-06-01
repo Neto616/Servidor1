@@ -3,7 +3,7 @@ import { Context } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
 export type ctrl_vistas = {
     inicio: (c: Context) => Promise<any>,
     fugas: (c: Context) => Promise<Response>,
-    estatus_filter: (c:Context) => Promise<Response>
+    estatus_filter: (c:Context) => Promise<Response>,
 };
 
 export type sensor_response = Array<{id: number, tiempo_inicial: Date, tiempo_final: Date}> | [];
