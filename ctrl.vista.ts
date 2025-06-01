@@ -112,6 +112,7 @@ const graficas = {
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
 
             for (const element of keys) {
+                console.log(element)
                 if(element == filtro){
                     filter = element;
                     filter_flags[element] = true;
