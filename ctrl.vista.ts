@@ -51,9 +51,8 @@ const vistas: ctrl_vistas = {
             c.status(200);
             return c.json({ estatus: 1, result: { 
                 info: "Todo bien en el servidor", 
-                filtro: filtro,
-                data: fugas || [],
-                filter_flags } })
+                filtro: await consultas.getFiltro(),
+                data: fugas || []} })
         } catch (error) {
             c.status(400);
             return c.json({ estatus: 0, result: { info: "Ocurrio un error : "+error}});
