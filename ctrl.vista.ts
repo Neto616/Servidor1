@@ -25,15 +25,15 @@ await consultas.initDB()
 
 const vistas: ctrl_vistas = {
     inicio: async (c: Context) => {
-        const indexPath = join('./build', 'index.html');
-        if (await exists(indexPath)) {
-            console.log("Si existe el html")
-            const indexContent = await Deno.readTextFile(indexPath);
-            console.log(indexContent)
-            return c.html(indexContent);
-        }
-        return c.notFound();
-
+        // const indexPath = join('./build', 'index.html');
+        // if (await exists(indexPath)) {
+        //     console.log("Si existe el html")
+        //     const indexContent = await Deno.readTextFile(indexPath);
+        //     console.log(indexContent)
+        //     return c.html(indexContent);
+        // }
+        // return c.notFound();
+        return c.json({ estatus: 1 })
     },
     fugas: async(c: Context): Promise<Response> => {
         try {
