@@ -55,7 +55,7 @@ const vistas: ctrl_vistas = {
                 }
                 filter_flags[element] = false;
             }
-            console.log(filter_flags)
+            console.log("Estatus filter: ", filter_flags)
             const fugas = await consultas.getReporteFugasDeskApp();
 
             c.status(200);
@@ -105,6 +105,7 @@ const graficas = {
             }
 
             const { filtro } = c.req.header();
+            console.log("El filtro para motrar datos es: ", filtro)
             const { gas } = c.req.query();
             const idGas = parseInt(gas || "5");
             let filter: string | undefined;
