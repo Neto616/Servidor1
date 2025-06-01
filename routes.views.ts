@@ -33,7 +33,7 @@ route.get("/estatus_filter", vistas.estatus_filter);
 route.post("/guardar_datos", graficas.guardar_datos);
 
 //Telegram
-route.get("/dispositivo_estatus", telegram.dispositivos);
+route.post("/dispositivo_estatus", telegram.dispositivos);
 route.get("/fugas_recientes", telegram.ultimas_fugas);
 
 export default route;
