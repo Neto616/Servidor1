@@ -184,7 +184,8 @@ const umbral = {
                 estatus: 1,
                 info: {
                     message: "Obtener la inforamción sobre el umbral",
-                    umbral: result[0]?.fueraUmbra ?? 0
+                    umbral: result[0]?.fueraUmbra ?? 0,
+                    gas: result[0]?.gas ?? "Monóxido de Carbono"
                 }
             });
         } catch (error) {
@@ -225,7 +226,7 @@ const telegram = {
     ultimas_fugas: async (c:Context) => {
         try {
             const resultado = await consultas.getFugasRecientes(3);
-            
+
             return c.json({ estatus: 1, info: {
                 message: "Datos de las ultimas tres fugas",
                 data: {
