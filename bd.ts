@@ -309,8 +309,8 @@ class BD {
             IF(tiempo_final IS NULL, 'Activo actualmente', tiempo_final) AS tiempo_final,
             tipo_gas as tipo_gas
         from fuga_gas order by id desc
-        limit ?;
-        `, [limite])
+        limit ${limite};
+        `)
 
         return rows;
     } catch (error) {
