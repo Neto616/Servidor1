@@ -268,7 +268,7 @@ class BD {
 
   public async setFiltro(filtro?:string) {
     try {
-      await this.bd.execute(`update configuraciones set filtro = ${filtro}`)      
+      await this.bd.query(`update configuraciones set filtro = ${filtro}`)      
     } catch (error) {
       return [];
     }
