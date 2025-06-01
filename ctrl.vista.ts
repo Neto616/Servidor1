@@ -108,10 +108,10 @@ const graficas = {
             const idGas = parseInt(gas || "5");
             let filter: string | undefined;
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
-
+ 
             for (const element of keys) {
                 console.log(element)
-                if(element == (filtro || "ultima_semana")){
+                if(element == (filtro ?? "ultima_semana")){
                     filter = element;
                     filter_flags[element] = true;
                 }
