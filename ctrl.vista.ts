@@ -50,6 +50,7 @@ const vistas: ctrl_vistas = {
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
             for (const element of keys) {
                 if(element == (filter || "ultima_semana")){
+                    console.log("Elemento seleccionado estatus_filter", element)
                     filtro = element;
                 }
             }
@@ -110,8 +111,8 @@ const graficas = {
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
  
             for (const element of keys) {
-                console.log(element)
                 if(element == (filtro ?? "ultima_semana")){
+                    console.log("Elemento seleccionado mostrar_datos", element)
                     filter = element;
                     filter_flags[element] = true;
                 }
