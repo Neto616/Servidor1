@@ -47,8 +47,7 @@ const vistas: ctrl_vistas = {
     },
     estatus_filter: async (c:Context) => {
         try {
-            ;
-            const { filter } = await c.req.header();
+            const { filter } = c.req.header();
             let filtro: string | undefined;
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
             for (const element of keys) {
@@ -109,7 +108,18 @@ const graficas = {
             const { filtro } = c.req.header();
             const { gas } = c.req.query();
             const idGas = parseInt(gas || "5");
-            console.log("Filtro del header", filtro);
+            let filter: string | undefined;
+            const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
+
+            for (const element of keys) {
+                if(element == filtro){
+                    filter = element;
+                    filter_flags[element] = true;
+                }
+                filter_flags[element] = false;
+            }
+            console.log(filter_flags)
+            
             const result = await consultas.getReporteFugas(filtro, (gases[idGas] || "Monóxido de Carbono"));
 
             console.log(result)
