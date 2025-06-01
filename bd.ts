@@ -301,6 +301,24 @@ class BD {
     }
   }
 
+  public async getFugasRecientes(limite: number) {
+    try {
+      const [rows] = await this.bd.execute(`
+        select 
+          tiempo_inicial as tiempo_inicial,
+            IF(tiempo_final IS NULL, 'Activo actualmente', tiempo_final) AS tiempo_final,
+            tipo_gas as tipo_gas
+        from fuga_gas order by id desc
+        limit ?;
+        `, [limite])
+
+        return rows;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
   
 }
 

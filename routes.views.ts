@@ -1,5 +1,5 @@
 import { Hono, Next } from 'https://deno.land/x/hono@v4.1.6/mod.ts';
-import { vistas, graficas, umbral } from "./ctrl.vista.ts";
+import { vistas, graficas, umbral, telegram } from "./ctrl.vista.ts";
 import { Context } from "node:vm";
 import BD from "./bd.ts";
 import { configuracion_repsonse } from "./tipos.ts";
@@ -20,15 +20,20 @@ async function umbralMdw (c:Context, next: Next) {
 
     }
 }
-
+//Datos cliente web
 route.get("/", vistas.inicio);
-route.get("/reporte_fugas", vistas.fugas);
-route.get("/estatus_filter", vistas.estatus_filter);
 route.get("/mostrar_datos", graficas.mostrar_datos);
 route.get("/mostrar_datos_envivo", graficas.mostrar_datos_envivo);
 route.get("/zona_peligro", graficas.zona_peligro);
 route.get("/umbral", umbral.obtener);
+route.get("/reporte_fugas", vistas.fugas);
 
+//Datos app desktop
+route.get("/estatus_filter", vistas.estatus_filter);
 route.post("/guardar_datos", graficas.guardar_datos);
+
+//Telegram
+route.get("/dispositivo_estatus", telegram.dispositivos);
+route.get("/fugas_recientes", telegram.ultimas_fugas);
 
 export default route;

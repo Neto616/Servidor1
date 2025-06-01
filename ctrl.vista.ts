@@ -18,6 +18,8 @@ let datos: data = {
     promedio: 0
 }
 
+let list_dipositivos: Record<string, any>= {}
+
 const consultas: BD = new BD();
 await consultas.initDB()
 
@@ -96,7 +98,7 @@ const graficas = {
     },
     mostrar_datos: async(c: Context) => {
         try {
-            const gases = {
+            const gases: Record<number, string> = {
                 1: "Metano",
                 2: "Propano",
                 3: "Amoníaco",
@@ -108,7 +110,7 @@ const graficas = {
             const { gas } = c.req.query();
             const idGas = parseInt(gas || "5");
             console.log("Filtro del header", filtro);
-            const result = await consultas.getReporteFugas(filtro, (gases[idGas] as string));
+            const result = await consultas.getReporteFugas(filtro, (gases[idGas] || "Monóxido de Carbono"));
 
             console.log(result)
 
@@ -194,8 +196,57 @@ const umbral = {
     }
 }
 
+const telegram = {
+    dispositivos: async (c:Context) => {
+        try {
+            const body_request = await c.req.json();
+
+            if(!Object.keys(body_request).length) return c.json({ estatus: 0, info: {message: "Favor de llenar los datos necesarios", data: {response: ""}}});
+            const nombreDispositivo: string = body_request.dispositivo as string;
+            list_dipositivos[nombreDispositivo] = body_request.estatus;
+
+            return c.json({ estatus: 1, info: {
+                message: "Ha cambiado el estado de un dispositivo",
+                data: {
+                    response: `${nombreDispositivo} ha cambiado su estatus actualmente se encuentra: ${body_request.estatus}`
+                }
+            }})
+
+        } catch (error) {
+            console.log(error);
+            return c.json({ estatus: 0, info: {
+                message: "Ha ocurrido un error",
+                data: {
+                    response: error
+                }
+            }});
+        }
+    },
+    ultimas_fugas: async (c:Context) => {
+        try {
+            const resultado = await consultas.getFugasRecientes(3);
+            
+            return c.json({ estatus: 1, info: {
+                message: "Datos de las ultimas tres fugas",
+                data: {
+                    response: resultado || []
+                }
+            }});
+        } catch (error) {
+            console.log(error);
+            return c.json({ estatus: 0, info: {
+                message: "Ha ocurrido un error al intentar obtener los ultimos registros de las fugas",
+                data: {
+                    response: []
+                }
+            }});
+1        }
+    }
+}
+
 export {
     vistas,
     graficas,
-    umbral
+    umbral,
+    telegram
 };
