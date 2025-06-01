@@ -49,7 +49,7 @@ const vistas: ctrl_vistas = {
             let filtro: string | undefined;
             const keys = Object.keys(filter_flags) as (keyof typeof filter_flags)[]
             for (const element of keys) {
-                if(element == filter){
+                if(element == (filter || "ultima_semana")){
                     filtro = element;
                     filter_flags[element] = true;
                 }
@@ -113,7 +113,7 @@ const graficas = {
 
             for (const element of keys) {
                 console.log(element)
-                if(element == filtro){
+                if(element == (filtro || "ultima_semana")){
                     filter = element;
                     filter_flags[element] = true;
                 }
