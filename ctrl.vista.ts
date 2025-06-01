@@ -241,7 +241,7 @@ const telegram = {
                     response: []
                 }
             }});
-1        }
+        }
     }
 }
 
